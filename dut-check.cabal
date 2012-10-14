@@ -1,0 +1,26 @@
+Name:                dut-check
+Version:             0.0
+Synopsis:            Property-based check of a Device Under Test (DUT)
+
+Description:         A Device-Under-Test quickcheck,
+		     based on randomly generated invoke code,
+		     and observable properties.
+		     The primary use case is hardware components.
+Homepage:            -
+License:             BSD3
+License-file:        LICENSE
+Author:              Andy Gill
+Maintainer:          andygill@ku.edu
+Stability:           Experimental
+Category:            Graphics
+Build-type:          Simple
+Cabal-version:       >=1.8
+Source-repository head
+  type:     git
+  location: https://github.com/ku-fpg/dut-check.git
+
+Library
+  Exposed-modules:     Test.DutCheck
+  Build-depends:       base >= 4.4 && < 4.7,
+                       random >= 1.0,
+                       transformers >= 0.3
