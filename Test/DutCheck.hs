@@ -62,7 +62,7 @@ data Ret  a = Ret a
         deriving Show
 
 -- | A prop is named test that should always be true for a specific test.
-data Prop f = Prop String ([f Ret] -> [Bool])
+data Prop f = Prop String ([f Ret] -> [Maybe String])
 
 -----------------------------------------------------------------
 
@@ -108,13 +108,12 @@ dut_interp callout cmd_var = loop 0 []
 
      loop2 n ret checked = do
             answers <- sequence [ f ret | f <- checked ]
-            let result = Prelude.and answers -- better all be true
-            if result then do loop (n+1) checked
-                      else do -- failed! Give error messsage
-                              print ("failed at #",n)
-                              return ()
+            case catMaybes answers of
+              []      -> loop (n+1) checked
+              (txt:_) -> do print ("failed at #",n,txt)
+                            return ()
 
-mkProp :: Prop f -> IO (f Ret -> IO Bool)
+mkProp :: Prop f -> IO (f Ret -> IO (Maybe String))
 mkProp (Prop nm f) = do
         in_var <- newEmptyMVar
         out_var <- newEmptyMVar
