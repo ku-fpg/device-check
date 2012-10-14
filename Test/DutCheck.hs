@@ -13,6 +13,7 @@ module Test.DutCheck
         , putCmd0
         , putCmd1
         , putCmd2
+        , approxLemma
         ) where
 
 import Control.Monad.Fix
@@ -181,6 +182,12 @@ instance Monoid (f Reply) => Monoid (DutM f ()) where
         mempty      = return ()
         mappend a b = mconcat [a,b]
         mconcat     = parDutM
+
+-----------------------------------------------------------------
+
+-- | Approx. lemma build a O(n^2) prop, that can be used for establishing small examples.
+approxLemma :: String -> ([f Ret] -> Maybe String) -> Prop f
+approxLemma str f = Prop str $ \ xs -> [ f (take n xs) | n <- [0..] ]
 
 -----------------------------------------------------------------
 -- Internals
