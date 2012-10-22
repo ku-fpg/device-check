@@ -1,4 +1,4 @@
-Name:                dut-check
+Name:                device-check
 Version:             0.0
 Synopsis:            Property-based check of a Device Under Test (DUT)
 
@@ -17,10 +17,10 @@ Build-type:          Simple
 Cabal-version:       >=1.8
 Source-repository head
   type:     git
-  location: https://github.com/ku-fpg/dut-check.git
+  location: https://github.com/ku-fpg/device-check.git
 
 Library
-  Exposed-modules:     Test.DutCheck
+  Exposed-modules:     Test.DeviceCheck
   Build-depends:       base >= 4.4 && < 4.7,
                        random >= 1.0,
                        transformers >= 0.3

@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables, BangPatterns, RecursiveDo, UndecidableInstances,
              FlexibleContexts, KindSignatures, RankNTypes, GADTs, FlexibleInstances #-}
-module Test.DutCheck
+module Test.DeviceCheck
         ( DutM
         , Reply(..)
         , Ret(..)
