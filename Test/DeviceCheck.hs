@@ -94,10 +94,21 @@ runDutM seed action prog = do
 --        if n `mod`  == 0 then do { putChar '.' ; hFlush stdout } else return ()
 
 dut_interp :: (f Reply -> IO (f Ret)) -> MVar (StepCmd f) -> IO ()
-dut_interp callout cmd_var = loop 0 []
+dut_interp callout cmd_var = do
+        t <- newEmptyMVar
+        forkIO $ tick t 1
+        loop t 0 []
   where
-     loop n checked = do
-        if n `mod` 10000 == 0 then do { putChar '.' ; hFlush stdout } else return ()
+     tick t n = do
+                 threadDelay (10 * 1000)
+                 putMVar t n
+                 tick t (n + 1)
+
+     loop t n checked = do
+        o <- tryTakeMVar t
+        case o of
+          Nothing -> return ()
+          Just tk -> do { putStr ("\013" ++ show n ++ " tests (" ++ show ((100 * n) `div` tk) ++ "/s)") ; hFlush stdout }
         -- get step commands
         (props,opt_cmd) <- takeStepCmd cmd_var
         case opt_cmd of
@@ -105,12 +116,12 @@ dut_interp callout cmd_var = loop 0 []
                          -- do step
           Just cmd -> do ret <- callout cmd
                          props' <- sequence [ mkProp prop | prop <- props ]
-                         loop2 n ret (props' ++ checked)
+                         loop2 t n ret (props' ++ checked)
 
-     loop2 n ret checked = do
+     loop2 t n ret checked = do
             answers <- sequence [ f ret | f <- checked ]
             case catMaybes answers of
-              []      -> loop (n+1) checked
+              []      -> loop t (n+1) checked
               (txt:_) -> do print ("failed at #",n,txt)
                             return ()
 
